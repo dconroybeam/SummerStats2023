@@ -40,12 +40,12 @@ Outside these regularly scheduled meetings, both Dr. Conroy-Beam and Ashley will
 
 ## Tentative Workshop Schedule
 
-Meeting                 | Topic
------------------------ | ----------------------------
-1: Wednesday, June 28   | Introduction to R
-2: Wednesday, July 5    | R Projects, GitHub, and R Markdown
-3: Wednesday, July 12   | Data Cleaning and Processing
-4: Wednesday, July 19   | Basic Data Analysis
-5: Wednesday July 26    | Data Visualization
-6: Wednesday, August 2  | Advanced Techniques
-7: Wednesday, August 9  | Final Presentations
+Meeting                 | Topic                              | Materials
+----------------------- | -----------------------------------|----------
+1: Wednesday, June 28   | Introduction to R                  | [Week 1 Materials](https://github.com/dconroybeam/SummerStats2023/tree/main/Week%201)
+2: Wednesday, July 5    | R Projects, GitHub, and R Markdown |
+3: Wednesday, July 12   | Data Cleaning and Processing       |
+4: Wednesday, July 19   | Basic Data Analysis                |
+5: Wednesday July 26    | Data Visualization                 |
+6: Wednesday, August 2  | Advanced Techniques                |
+7: Wednesday, August 9  | Final Presentations                |
