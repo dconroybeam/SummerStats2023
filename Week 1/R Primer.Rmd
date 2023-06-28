@@ -664,3 +664,4 @@ Apply function           | apply(data,row/column,function(x) function)
 sApply function          | sapply(vector,function(x) function)
 lApply function          | lapply(vector1,vector2,function(x) function)
 Custom function          | functionName<-function(inputs){code return(output)}
+
