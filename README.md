@@ -62,7 +62,7 @@ and Ashley will be available by email to help with questions or issues.
 | Meeting                | Topic                              | Materials                                                                             |
 |------------------------|------------------------------------|---------------------------------------------------------------------------------------|
 | 1: Wednesday, June 28  | Introduction to R                  | [Week 1 Materials](https://github.com/dconroybeam/SummerStats2023/tree/main/Week%201) |
-| 2: Wednesday, July 5   | R Projects, GitHub, and R Markdown |                                                                                       |
+| 2: Wednesday, July 5   | R Projects, GitHub, and R Markdown | [Week 2 Materials](https://github.com/dconroybeam/SummerStats2023/tree/main/Week%202) |
 | 3: Wednesday, July 12  | Data Cleaning and Processing       |                                                                                       |
 | 4: Wednesday, July 19  | Basic Data Analysis                |                                                                                       |
 | 5: Wednesday July 26   | Data Visualization                 |                                                                                       |
