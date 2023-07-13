@@ -1,0 +1,157 @@
+---
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+
+#Packages:
+library(stringr)
+library(knitr)
+```
+
+
+
+```{r load}
+
+#Load the data
+rawData<-read.csv("Week 3/Raw Data/Week 3 Example Data.csv")
+
+#Create a copy of raw data
+data<-rawData
+
+```
+
+
+
+```{r restructure}
+
+###Rename Variables###
+
+#Rename TIPI items
+colnames(data)[6:15] <- paste0("tipi",
+                               rep(c("E", "A", "C", "N", "O"), 2),
+                               1:10)
+#Label which were reverse coded
+colnames(data)[c(7,11,13:15)]<-paste0(colnames(data)[c(7,11,13:15)],"r")
+
+
+
+###Restructure Variables###
+
+#Split the condition variable into two columns
+conditionSplit<-str_split_fixed(data$condition,"_",2)
+
+#Name the newly created variables
+colnames(conditionSplit)<-c("shockCause","pMoral")
+
+#Add the split columns to the data
+data<-cbind(data,conditionSplit)
+
+#Remove the original condition variable
+data<-data[,-4]
+
+
+
+###Recode Variables###
+
+#Recode missing values in guilt
+data$guilt<-ifelse(data$guilt==-99,NA,data$guilt)
+
+#Make character variables numeric:
+#0 = female, 1 = male
+data$sex<-factor(data$sex,labels=c(0,1))
+
+#0 = low, 1 = medium, 2 = high
+data$shock<-factor(data$shock,labels=c(2,0,1))
+
+#0 = partner, 1 = self
+data$shockCause<-factor(data$shockCause,labels=c(0,1))
+
+#0 = bad, 1 = good
+data$pMoral<-factor(data$pMoral,labels=c(0,1))
+
+
+
+###Reverse Code Variables###
+
+#Reverse code relevant TIPI items
+data[,c(6,10,12:14)]<-(data[,c(6,10,12:14)]*-1)+8
+
+```
+
+
+
+```{r compute}
+
+#Compute personality variables
+data$extra<-rowMeans(data[,c(5,10)])
+data$agre<-rowMeans(data[,c(6,11)])
+data$consc<-rowMeans(data[,c(7,12)])
+data$neuro<-rowMeans(data[,c(8,13)])
+data$open<-rowMeans(data[,c(9,14)])
+
+```
+
+
+# Codebook for Week 3 Processed Data
+
+```{r codebook}
+
+#Rearrange data:
+#Demographics + individual differences first
+#Followed by experimental manipulations and then outcome variables
+#Processed composites to the right of their subcomponents
+data<-data[,c(1:3,5:14,20:24,4,18:19,15:17)]
+
+#Create a codebook
+codebook<-data.frame("variable"=colnames(data))
+
+#Briefly describe each variable
+codebook$description<-c("Participant ID Number",
+                        "Sex of Participant (0 = female, 1 = male)",
+                        "Age of Participant",
+                        "TIPI Extraversion 1",
+                        "TIPI Agreeableness 1 (R)",
+                        "TIPI Conscientiousness 1",
+                        "TIPI Neuroticism 1",
+                        "TIPI Openness 1",
+                        "TIPI Extraversion 2 (R)",
+                        "TIPI Agreeableness 2",
+                        "TIPI Conscientiousness 2 (R)",
+                        "TIPI Neuroticism 2 (R)",
+                        "TIPI Openness 2 (R)",
+                        "Composite Extraversion",
+                        "Composite Agreeableness",
+                        "Composite Conscientiousness",
+                        "Composite Neuroticism",
+                        "Composite Openness",
+                        "Shock Voltage (0 = low, 1 = medium, 2 = high)",
+                        "Shock Cause (0 = partner; 1 = participant)",
+                        "Partner Morality (0 = bad; 1 = good)",
+                        "Amount of Money Shared with Partner (Pre-Shock)",
+                        "Amount of Money Shared with Partner (Post-Shock)",
+                        "Self-Reported Guilt After Shock"
+)
+
+#Save the data type for each variable
+codebook$type<-sapply(data,class)
+
+#Save range of possible values to the codebook
+codebook$range<-apply(data,2,function(x) paste(range(x,na.rm=T),collapse=", "))
+
+codebook$missing<-apply(data,2,function(x) sum(is.na(x)))
+
+#Output the codebook as a table
+kable(codebook)
+
+```
+
+
+
+```{r save}
+
+write.csv(data,"Week 3/Processed Data/Week 3 Data PROCESSED.csv",row.names=F)
+
+```
+
