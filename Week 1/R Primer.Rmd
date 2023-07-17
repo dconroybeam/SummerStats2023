@@ -641,7 +641,7 @@ Correlation              | cor(data\$x,data\$y)
 Regression               | r1<-lm(y~x1+x2,data=data)
 One-way ANOVA            | a1<-lm(y~x,data=data)
 Two-way ANOVA            | a1<-lm(y~x1*x2,data=data)
-Repated Measures ANOVA   | a1<-aov(y~x+Error(PIN/x),data=data)
+Repated Measures ANOVA   | a1<-aov(y~x+Error(PIN),data=data)
 -------------------------|---------------------------------------------------
 Histogram                | hist(vector)
 Basic plot               | plot(y~x,data=data)
