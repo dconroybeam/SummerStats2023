@@ -1,0 +1,315 @@
+---
+title: "Data Analysis of Week 3 Example Data"
+author: "Daniel Conroy-Beam"
+date: "`r Sys.Date()`"
+output:
+   html_document:
+    toc: true
+    toc_float: true
+---
+
+```{r setup, include=FALSE}
+#DAN
+#THINGS TO DO:
+#1. Make sure everyone has processed data in the right place
+#2. Make sure everyone downloads the data analysis primer
+#3. Go to GitHub repo and enable pages for their project repository
+#4. Make sure knit directory is set to project
+#5. Make sure toc: true and toc_float: true are set up
+
+knitr::opts_chunk$set(echo = TRUE)
+
+library(reshape2)
+
+```
+
+
+## Overview
+
+This report presents primary data analysis for the Week 3 example data. Specifically, this will report basic descriptive statistics as well as report tests  of the following predictions:  
+
+1. People will feel more guilt when:  
+  + 1.1. They caused the shock (vs. their partner)
+  + 1.2. The partner is morally good (vs. bad)
+  + 1.3. The shock is stronger (high > medium > low)
+2. Women will report more guilt than men
+3. Agreeable people will report more guilt
+4. Neurotic people will report more guilt
+  
+and  
+  
+5. People will be more generous when:
+  + 5.1 They caused the shock (vs. their partner)
+  + 5.2 The partner is morally good (vs. bad)
+  + 5.3 The shock is stronger (high > medium > low)
+  
+6. Women will be more generous than men  
+7. Agreeable people will be more generous  
+8. Neurotic people will be more generous  
+
+
+
+```{r load}
+
+#Load in the data
+data<-read.csv("Week 3/Processed Data/Week 3 Data PROCESSED.csv")
+
+#Recode variables:
+data$PIN<-as.factor(data$PIN)
+data$sex<-as.factor(data$sex)
+data$shock<-as.factor(data$shock)
+data$shockCause<-as.factor(data$shockCause)
+data$pMoral<-as.factor(data$pMoral)
+
+
+```
+
+
+
+## Descriptives
+
+Descriptive statistics for guilt:
+```{r descGuilt}
+
+c(summary(data$guilt),"SD"=sd(data$guilt,na.rm=T))
+
+```
+
+Descriptive statistics for generosity:
+```{r descGen}
+
+#Pre-shock:
+c(summary(data$preShare),"SD"=sd(data$preShare,na.rm=T))
+
+#Post-shock:
+c(summary(data$postShare),"SD"=sd(data$postShare,na.rm=T))
+
+```
+
+Descriptive statistics for personality:
+```{r descPers}
+
+#Agreeableness:
+c(summary(data$agre),"SD"=sd(data$agre,na.rm=T))
+
+#Neuroticism:
+#Pre-shock:
+c(summary(data$neuro),"SD"=sd(data$neuro,na.rm=T))
+
+```
+
+
+
+## Guilt Analyses
+
+### Prediction 1.1
+
+Prediction 1.1 was supported. People felt more guilty when they caused the shock:
+```{r p1.1}
+
+#Run the t-test for prediction 1.1
+p1.1<-t.test(data$guilt~data$shockCause)
+
+#Output the result
+p1.1
+
+```
+
+
+
+### Prediction 1.2 
+
+Prediction 1.2 was supported. People felt more guilty when the partner was morally good:
+```{r p1.2}
+
+#Run the t-test for prediction 1.2
+p1.2<-t.test(data$guilt~data$pMoral)
+
+#Output the result
+p1.2
+
+```
+
+
+
+### Prediction 1.3
+
+Prediction 1.3 was supported. People felt more guilty when the shock was stronger:
+```{r p1.3}
+
+#Run the ANOVA for prediction 1.3
+p1.3<-lm(guilt~shock,data=data)
+
+#Output the result
+anova(p1.3)
+
+#Output the group means
+tapply(data$guilt,data$shock,function(x) mean(x,na.rm=T))
+
+```
+
+
+
+### Prediction 2
+
+Prediction 2 was not supported. Women did not report more guilt than men:
+```{r p2}
+
+#Run the t-test for prediction 2
+p2<-t.test(data$guilt~data$sex)
+
+#Output the result
+p2
+
+```
+
+
+
+### Prediction 3
+
+Prediction 3 was supported. Agreeable people reported more guilt:
+```{r p3}
+
+#Run the correlation test for prediction 3
+p3<-cor.test(data$agre,data$guilt)
+
+#Output the result
+p3
+
+```
+
+
+
+### Prediction 4
+
+Prediction 4 was not supported. There was no relationship between neuroticism and guilt:
+```{r p4}
+
+#Run the correlation test for prediction 4
+p4<-cor.test(data$neuro,data$guilt)
+
+#Output the result
+p4
+
+#Test predictions 3 and 4 in a regression:
+guiltReg<-lm(guilt~neuro+agre,data=data)
+summary(guiltReg)
+
+```
+
+
+
+## Generosity Analyses
+
+```{r melt}
+
+#Melt the data for within-subjects analyses
+dataMelt<-melt(data,
+               measure.vars=c("preShare","postShare"),
+               variable.name=c("prePost"),
+               value.name=c("share"))
+
+```
+
+
+
+### Prediction 5.1
+
+Prediction 5.1 was supported. People were more generous when they caused the shock:
+```{r p5.1}
+
+#Run the within-subjects ANOVA for p5.1
+p5.1<-aov(share~prePost*shockCause+Error(PIN),data=dataMelt)
+
+#Output the results:
+summary(p5.1)
+
+#Output means as a function of condition:
+tapply(dataMelt$share,dataMelt[,c(23,20)],function(x) mean(x,na.rm=T))
+```
+
+
+
+### Prediction 5.2 
+
+Prediction 5.2 was supported. People were more generous when the partner was morally good:
+```{r p5.2}
+
+#Run the within-subjects ANOVA for p5.2
+p5.2<-aov(share~prePost*pMoral+Error(PIN),data=dataMelt)
+
+#Output the results:
+summary(p5.2)
+
+#Output means as a function of condition:
+tapply(dataMelt$share,dataMelt[,c(23,21)],function(x) mean(x,na.rm=T))
+```
+
+
+
+### Prediction 5.3
+
+Prediction 5.3 was supported. People were more generous when the shock was stronger:
+```{r p5.3}
+
+#Run the within-subjects ANOVA for p5.3
+p5.3<-aov(share~prePost*shock+Error(PIN),data=dataMelt)
+
+#Output the results:
+summary(p5.3)
+
+#Output means as a function of condition:
+tapply(dataMelt$share,dataMelt[,c(23,19)],function(x) mean(x,na.rm=T))
+```
+
+
+
+### Prediction 6
+
+Prediction 6 was not supported. Women were not more generous:
+```{r p6}
+
+#Run the ANOVA to test prediction 6
+p6<-aov(share~prePost*sex+Error(PIN),data=dataMelt)
+
+#Output the results:
+summary(p6)
+
+#Output means as a function of condition and sex:
+tapply(dataMelt$share,dataMelt[,c(23,2)],function(x) mean(x,na.rm=T))
+
+```
+
+
+
+### Prediction 7
+
+Prediction 7 was supported. Agreeable people were more generous:
+```{r p7}
+
+#Run the correlation test for prediction 7
+p7<-cor.test(data$agre,data$postShare)
+
+#Output the result
+p7
+
+```
+
+
+
+### Prediction 8
+
+Prediction 8 was not supported. There was no relationship between neuroticism and generosity:
+```{r p8}
+
+#Run the correlation test for prediction 8
+p8<-cor.test(data$neuro,data$postShare)
+
+#Output the result
+p8
+
+#Test predictions 7 and 8 in a regression:
+genReg<-lm(postShare~neuro+agre,data=data)
+summary(genReg)
+
+```
