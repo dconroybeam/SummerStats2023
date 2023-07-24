@@ -142,12 +142,15 @@ You can set the text size for the whole graph using _base_size =_ inside _theme_
 
 ```{r,fig.height=4,fig.width=4,fig.align="center"}
 plotName <- plotName +
-  theme_gray(base_size = 15)
+  theme_gray(base_size = 15)+
+  theme(legend.position="none")
 
 #scale_x_discrete = lets you set options for the x-axis, including the axis ticks
 #do ?scale_x_discrete to see all options
 #Use scale_y_discrete for a categorical y-axis
 #Use scale_x_continuous or scale_y_continuous for continuous variables
+
+#theme() always has to follow theme_gray()
 
 #To view your plot, execute:
 plotName
@@ -392,7 +395,8 @@ plotName
 +-----------------------+-------------------------------------------------------------------------------+
 | Change legend colors  | \+ scale_color_manual(values = c("red", "black"))                             |
 +-----------------------+-------------------------------------------------------------------------------+
-| Hide a legend         | \+ theme(legend.position="none")                                              |
-+-----------------------+-------------------------------------------------------------------------------+
 | Change font size      | \+ theme_gray(base_size=20)                                                   |
 +-----------------------+-------------------------------------------------------------------------------+
+| Hide a legend         | \+ theme(legend.position="none")                                              |
++-----------------------+-------------------------------------------------------------------------------+
+
