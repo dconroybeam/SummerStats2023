@@ -18,6 +18,8 @@ You will want to use the _ggplot2_ package for all of your data visualization. M
 
 
 #load ggplot2
+#Make sure you have installed ggplot2 before you have run this
+#If not, first run: install.packages("ggplot2")
 library(ggplot2)
 
 ```
@@ -42,10 +44,11 @@ dataFrame <-
 plotName <- ggplot(data = dataFrame,
                    aes(x = xVariable,
                        y = yVariable))
+
 #plotName = a data structure for storing your plot
 #dataFrame = the dataframe containing your data
 #xVariable = your x-axis variable
-#yVariable = your yaxis variable
+#yVariable = your y-axis variable
 
 #To view your plot, execute:
 plotName
@@ -53,19 +56,24 @@ plotName
 
 The _aes()_ option inside the _ggplot2()_ function sets the aesthetic options for your plot. You can use this to set, among other things:
 
-* Which variables you plot and on which axis
+* Which variables you plot and on which axes
 * The colors and fills of your graph
 * The size, transparency, and shape of graph elements
   
     
-To add on to your base plot, you add additional functions using the "**+**". For example, to label your axes, use the _labs()_ function:
+To add on to your base plot, you add additional functions using the **+**. For example, to label your axes, use the _labs()_ function:
 
 ```{r,fig.height=3,fig.width=3,fig.align="center"}
 plotName <- plotName +
-  labs(x = "X Variable", y = "Y Variable")
+  labs(x = "X Variable", #<---
+       y = "Y Variable") #<---
+
 #labs() = labels elements of your graph
 #You can use this to label the axes, legend, graph title, and more
 #Run ?labs to see all of your options
+
+#Notice that instead of regenerating the whole plot from scratch every time, you can add new elements onto the data structure for an existing plot like you see here. 
+#Both approaches work, but if you choose to modify an existing plot, you have to be mindful of what you're adding/changing.
 
 #To view your plot, execute:
 plotName
@@ -73,9 +81,11 @@ plotName
 
 ***
 
+\newpage
+
 ## Bar Plots
 
-To make a simple bar plot of group means across a categorical predictor, do:
+To make a simple bar plot of group means across a categorical predictor, add the _stat_summary()_ function:
 
 ```{r,include=F}
 dataFrame <- data.frame(
@@ -89,9 +99,11 @@ dataFrame <- data.frame(
 plotName <- ggplot(data = dataFrame,
                    aes(x = xVariable,
                        y = yVariable)) +
-  stat_summary(fun = "mean",
-               geom = "bar",
-               position = "dodge")
+  labs(x = "X Variable",
+       y = "Y Variable") +
+  stat_summary(fun = "mean", #<---
+               geom = "bar", #<---
+               position = "dodge") #<---
 
 #stat_summary = computes and plots a summary statistic based on your data
 #fun = the statistic you want to compute
@@ -102,22 +114,33 @@ plotName <- ggplot(data = dataFrame,
 plotName
 ```
 
-You can label using _labs()_ and add color using the _fill =_ option inside _aes()_:
+You can add color using the _fill =_ option inside _aes()_:
 
 ```{r,fig.height=3,fig.width=3,fig.align="center"}
 plotName <- ggplot(data = dataFrame,
                    aes(x = xVariable,
                        y = yVariable,
-                       fill = xVariable)) +
-  stat_summary(fun = "mean",
-               geom = "bar",
-               position = "dodge") +
+                       fill = xVariable)) +  #<---
   labs(x = "X Variable",
        y = "Y Variable") +
-  theme(legend.position = "none")
+  stat_summary(fun = "mean",
+               geom = "bar",
+               position = "dodge")
+
 
 #fill = fills in geoms according to the variable specified
-#theme(legend.position = "none") = hides the legend (as it is redundant in this case)
+
+#To view your plot, execute:
+plotName
+```
+
+You can remove the legend using the _guides_() function:
+
+```{r,fig.height=3,fig.width=3,fig.align="center"}
+plotName <- plotName +
+  guides(fill="none") #<---
+
+#guides(fill="none") = blanks out the legend for color fill
 
 #To view your plot, execute:
 plotName
@@ -127,7 +150,7 @@ You can also relabel the x-axis ticks using _scale_x_discrete()_:
 
 ```{r,fig.height=3,fig.width=3,fig.align="center"}
 plotName <- plotName +
-  scale_x_discrete(labels = c("Low", "High"))
+  scale_x_discrete(labels = c("Low", "High")) #<---
 
 #scale_x_discrete = lets you set options for the x-axis, including the axis ticks
 #do ?scale_x_discrete to see all options
@@ -140,17 +163,12 @@ plotName
 
 You can set the text size for the whole graph using _base_size =_ inside _theme_gray()_:
 
-```{r,fig.height=4,fig.width=4,fig.align="center"}
+```{r,fig.height=3,fig.width=3,fig.align="center"}
 plotName <- plotName +
-  theme_gray(base_size = 15)+
-  theme(legend.position="none")
+  theme_gray(base_size = 20) #<---
 
-#scale_x_discrete = lets you set options for the x-axis, including the axis ticks
-#do ?scale_x_discrete to see all options
-#Use scale_y_discrete for a categorical y-axis
-#Use scale_x_continuous or scale_y_continuous for continuous variables
-
-#theme() always has to follow theme_gray()
+#theme_gray() = determines the overall look of the graph and allows you to set global parameters, like text size
+#Other themes (such as classic() and bw()) are available.
 
 #To view your plot, execute:
 plotName
@@ -162,17 +180,17 @@ To add a grouping variable, use it as the _fill()_ variable:
 plotName <- ggplot(data = dataFrame,
                    aes(x = xVariable,
                        y = yVariable,
-                       fill = groupVariable)) +
+                       fill = groupVariable)) + #<---
+  labs(x = "X Variable",
+       y = "Y Variable",
+       fill = "Group Variable") + #<---
   stat_summary(fun = "mean",
                geom = "bar",
                position = "dodge") +
-  labs(x = "X Variable",
-       y = "Y Variable",
-       fill = "Group Variable") +
   scale_x_discrete(labels = c("Low", "High")) +
-  scale_fill_discrete(labels = c("Group A", "Group B"))
+  scale_fill_discrete(labels = c("Group A", "Group B")) #<---
 
-#scale_fill_discrete() = sets options for fill and legend
+#scale_fill_discrete() = sets options for the color fill and the legend, such as the legend labels
 
 #To view your plot, execute:
 plotName
@@ -182,9 +200,9 @@ Finally, to add error bars representing 95% confidence intervals, you can use th
 
 ```{r,fig.height=3,fig.width=5,fig.align="center"}
 plotName <- plotName +
-  stat_summary(fun.data = "mean_cl_boot",
-               geom = "errorbar",
-               position = "dodge")
+  stat_summary(fun.data = "mean_cl_boot", #<---
+               geom = "errorbar", #<---
+               position = "dodge") #<---
 
 #To view your plot, execute:
 plotName
@@ -195,67 +213,62 @@ plotName
 
 ## Box and Violin Plots
 
-Bar plots are popular. But unless you are working with count data, bar plots are often not very good. Better are plots that actually show the distribution of the data.  
+Bar plots are popular. But unless you are working with count data, bar plots are often not very good. Plots that actually show the distribution of the data are often more appropriate.
 
-One example is the boxplot:
+One example is the boxplot, which you can add with the _geom_boxplot()_ function. In a box plot, the thick line represents the median, the edges of the box represent the IQR (bottom 25th percentile to top 75th percentile), and the "whiskers" extend out from the box up to 1.5 * IQR. Any dots are potential outliers that sit very far from the rest of the data.
 
 ```{r,fig.height=5,fig.width=7,fig.align="center"}
 plotName <- ggplot(data = dataFrame,
                    aes(x = xVariable,
                        y = yVariable,
                        fill = groupVariable)) +
-  geom_boxplot() +
   labs(x = "X Variable",
        y = "Y Variable",
        fill = "Group Variable") +
   scale_x_discrete(labels = c("Low", "High")) +
-  scale_fill_discrete(labels = c("Group A", "Group B"))
+  scale_fill_discrete(labels = c("Group A", "Group B")) +
+  geom_boxplot() #<---
 
 #geom_boxplot() = plots data as a boxplot
 
 #To view your plot, execute:
 plotName
 
-#Thick line = median
-#Box = IQR (bottom 25th percentile to top 75th percentile)
-#Whiskers = 1.5 * IQR
-#Dots = outliers
 ```
 
-Another is the violin plot:
+Another is the violin plot, which you can add with _geom_violin()_. A violin plot is like a sideways density distribution (think a smoothed histogram turned on its side). It is thicker where you have more data and thinner whre you have less data. This can combine well with a boxplot:
 
 ```{r,fig.height=5,fig.width=7,fig.align="center"}
 plotName <- ggplot(data = dataFrame,
                    aes(x = xVariable,
                        y = yVariable,
                        fill = groupVariable)) +
-  geom_violin(position = position_dodge(1)) +
-  geom_boxplot(position = position_dodge(1),
-               width = .075) +
   labs(x = "X Variable",
        y = "Y Variable",
        fill = "Group Variable") +
   scale_x_discrete(labels = c("Low", "High")) +
-  scale_fill_discrete(labels = c("Group A", "Group B"))
+  scale_fill_discrete(labels = c("Group A", "Group B")) +
+  geom_violin(position = position_dodge(1)) + #<---
+  geom_boxplot(position = position_dodge(1), #<---
+               width = .075) #<---
 
 #geom_violin() = plots data as a violin plot
-#position_dodge() = sets the horizontal positions of the geoms
-#width = sets the width of the geom
+#position_dodge() = sets the horizontal positions of the plot elements (useful if you want them to overlap exactly)
+#width = sets the width of the plot element
 
 #To view your plot, execute:
 plotName
 
-#Violin plot = sideways density distribution
 ```
 
-*Note*: both of these graphs make clear in this case that the distribution of the 4th group is different from the others. This is obscured in the bar plot. It's particularly clear from the violin plot that the 4th group is bimodal.
+**Note**: both of these graphs make clear in this case that the distribution of the 4th group is different from the others. This is obscured in the bar plot. In fact, it's particularly clear from the violin plot that the 4th group is bimodal. This is a key advantage of a violin plot over a bar plot.
 
 
 ***
 
 ## Scatter Plots
 
-To make a scatter plot showing the relationship between two continuous variables, do:
+To make a scatter plot showing the relationship between two continuous variables, use _geom_point()_:
 
 ```{r, include=F}
 
@@ -276,9 +289,9 @@ dataFrame$yVariable <-
 plotName <- ggplot(data = dataFrame,
                    aes(x = xVariable,
                        y = yVariable)) +
-  geom_point()+
   labs(x = "X Variable",
-       y = "Y Variable")
+       y = "Y Variable") +
+  geom_point() #<---
 
 #geom_point() = plot data as points
 
@@ -286,16 +299,16 @@ plotName <- ggplot(data = dataFrame,
 plotName
 ```
 
-To add a trend line, use the _geom\_smooth()_ function:
+To add a trend line, use the _geom_smooth()_ function:
 
 ```{r,fig.height=3,fig.width=3,fig.align="center"}
 plotName <- ggplot(data = dataFrame,
                    aes(x = xVariable,
                        y = yVariable)) +
-  geom_point() +
-  geom_smooth(method = "lm") +
   labs(x = "X Variable",
-       y = "Y Variable")
+       y = "Y Variable") +
+  geom_point() +
+  geom_smooth(method = "lm") #<---
 
 #geom_smooth() = add a "smoothed" trendline
 #'method = "lm"' = add a regression line
@@ -310,36 +323,37 @@ To add a grouping variable, use the _color =_ option inside _aes()_:
 plotName <- ggplot(data = dataFrame,
                    aes(x = xVariable,
                        y = yVariable,
-                       color = groupVariable)) +
-  geom_point() +
-  geom_smooth(method = "lm") +
+                       color = groupVariable)) + #<---
   labs(x = "X Variable",
        y = "Y Variable",
-       fill = "Group Variable") +
-  scale_color_discrete(labels = c("Group A", "Group B", "Group C"))
+       color = "Group Variable") + #<---
+  geom_point() +
+  geom_smooth(method = "lm") +
+  scale_color_discrete(labels = c("Group A", "Group B", "Group C")) #<---
 
 #geom_smooth() = add a "smoothed" trendline
 #'method = "lm"' = add a regression line
+#Notice that scale_color_discrete() is the color equivalent of scale_fill_discrete()
 
 #To view your plot, execute:
 plotName
 ```
 
-You can choose the color palette for the grouping:
+You can choose the color palette for the grouping using _scale_color_manual()_:
 
 ```{r,fig.height=3,fig.width=5,fig.align="center"}
 plotName <- ggplot(data = dataFrame,
                    aes(x = xVariable,
                        y = yVariable,
                        color = groupVariable)) +
-  geom_point() +
-  geom_smooth(method = "lm") +
   labs(x = "X Variable",
        y = "Y Variable",
-       fill = "Group Variable") +
-  scale_color_manual(
-    values = c("dodgerblue", "forestgreen", "palevioletred4"),
-    labels = c("Group A", "Group B", "Group C")
+       color = "Group Variable") +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  scale_color_manual( #<---
+    values = c("dodgerblue", "forestgreen", "palevioletred4"), #<---
+    labels = c("Group A", "Group B", "Group C") #<---
   )
 
 #geom_smooth() = add a "smoothed" trendline
@@ -349,54 +363,57 @@ plotName <- ggplot(data = dataFrame,
 plotName
 ```
 
+***
+
 \newpage
 # Data Visualization Cheat Sheet
 
-+-----------------------+-------------------------------------------------------------------------------+
-| Plotting option       | Code                                                                          |
-+=======================+===============================================================================+
-| Base plot             | plotName <- ggplot(data = dataFrame,\hfill\break                              |
-|                       |               aes(x = xVariable,\hfill\break                                  |
-|                       |               y = yVariable,\hfill\break                                      | 
-|                       |               color = groupVariable))                                         |
-+-----------------------+-------------------------------------------------------------------------------+
-|                       |                                                                               |
-+-----------------------+-------------------------------------------------------------------------------+
-| Bar plot              | \+ stat_summary(fun="mean",\hfill\break                                       |
-|                       |                 geom="bar",\hfill\break                                       | 
-|                       |                position="dodge")                                              |
-+-----------------------+-------------------------------------------------------------------------------+
-| 95% CI Error Bars     | \+ stat_summary(fun.data="mean_cl_boot",\hfill\break                          |
-|                       |                 geom="errorbar",\hfill\break                                  |
-|                       |                 position="dodge")                                             |
-+-----------------------+-------------------------------------------------------------------------------+
-|                       |                                                                               |
-+-----------------------+-------------------------------------------------------------------------------+
-| Box plot              | \+ geom_boxplot(position = position_dodge(1))                               |
-+-----------------------+-------------------------------------------------------------------------------+
-| Violin plot           | \+ geom_violin(position = position_dodge(1))                                |
-+-----------------------+-------------------------------------------------------------------------------+
-|                       |                                                                               |
-+-----------------------+-------------------------------------------------------------------------------+
-| Scatter plot          | \+ geom_point()                                                               | 
-+-----------------------+-------------------------------------------------------------------------------+
-| Add trend line        | \+ geom_smooth(method="lm")                                                   | 
-+-----------------------+-------------------------------------------------------------------------------+
-|                       |                                                                               |
-+-----------------------+-------------------------------------------------------------------------------+
-| Add labels            | \+ labs(x="X Label",\hfill\break                                              |
-|                       |         y = "Y Label",\hfill\break                                            |
-|                       |         color = "Color Label",\hfill\break                                    |
-|                       |         fill = "Fill Label")                                                  |
-+-----------------------+-------------------------------------------------------------------------------+
-| Change axis labels    | \+ scale_x_discrete(labels = c("Low", "High"))                                |
-+-----------------------+-------------------------------------------------------------------------------+
-| Change legend labels  | \+ scale_color_discrete(labels = c("Low", "High"))                            |
-+-----------------------+-------------------------------------------------------------------------------+
-| Change legend colors  | \+ scale_color_manual(values = c("red", "black"))                             |
-+-----------------------+-------------------------------------------------------------------------------+
-| Change font size      | \+ theme_gray(base_size=20)                                                   |
-+-----------------------+-------------------------------------------------------------------------------+
-| Hide a legend         | \+ theme(legend.position="none")                                              |
-+-----------------------+-------------------------------------------------------------------------------+
++-----------------------+-----------------------------------------------------------+
+| Plotting option       | Code                                                      |
++=======================+===========================================================+
+| Base plot             | plotName <- ggplot(data = dataFrame,\hfill\break          |
+|                       |               aes(x = xVariable,\hfill\break              |
+|                       |               y = yVariable,\hfill\break                  | 
+|                       |               color = groupVariable))                     |
++-----------------------+-----------------------------------------------------------+
+|                       |                                                           |
++-----------------------+-----------------------------------------------------------+
+| Bar plot              | \+ stat_summary(fun="mean",\hfill\break                   |
+|                       |                 geom="bar",\hfill\break                   | 
+|                       |                position="dodge")                          |
++-----------------------+-----------------------------------------------------------+
+| 95% CI Error Bars     | \+ stat_summary(fun.data="mean_cl_boot",\hfill\break      |
+|                       |                 geom="errorbar",\hfill\break              |
+|                       |                 position="dodge")                         |
++-----------------------+-----------------------------------------------------------+
+|                       |                                                           |
++-----------------------+-----------------------------------------------------------+
+| Box plot              | \+ geom_boxplot(position = position_dodge(1),\hfill\break |  
+|                       |                 width=.5)                                 |
++-----------------------+-----------------------------------------------------------+
+| Violin plot           | \+ geom_violin(position = position_dodge(1))              |
++-----------------------+-----------------------------------------------------------+
+|                       |                                                           |
++-----------------------+-----------------------------------------------------------+
+| Scatter plot          | \+ geom_point()                                           | 
++-----------------------+-----------------------------------------------------------+
+| Add trend line        | \+ geom_smooth(method="lm")                               | 
++-----------------------+-----------------------------------------------------------+
+|                       |                                                           |
++-----------------------+-----------------------------------------------------------+
+| Add labels            | \+ labs(x="X Label",\hfill\break                          |
+|                       |         y = "Y Label",\hfill\break                        |
+|                       |         color = "Color Label",\hfill\break                |
+|                       |         fill = "Fill Label")                              |
++-----------------------+-----------------------------------------------------------+
+| Change axis labels    | \+ scale_x_discrete(labels = c("Low", "High"))            |
++-----------------------+-----------------------------------------------------------+
+| Change legend labels  | \+ scale_color_discrete(labels = c("Low", "High"))        |
++-----------------------+-----------------------------------------------------------+
+| Change legend colors  | \+ scale_color_manual(values = c("red", "black"))         |
++-----------------------+-----------------------------------------------------------+
+| Change font size      | \+ theme_gray(base_size=20)                               |
++-----------------------+-----------------------------------------------------------+
+| Hide a legend         | \+ guides(color="none",fill="none")                       |
++-----------------------+-----------------------------------------------------------+
 
