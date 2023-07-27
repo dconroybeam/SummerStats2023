@@ -6,20 +6,16 @@ output:
    html_document:
     toc: true
     toc_float: true
+    fig_width: 10
+    fig_height: 6
 ---
 
 ```{r setup, include=FALSE}
-#DAN
-#THINGS TO DO:
-#1. Make sure everyone has processed data in the right place
-#2. Make sure everyone downloads the data analysis primer
-#3. Go to GitHub repo and enable pages for their project repository
-#4. Make sure knit directory is set to project
-#5. Make sure toc: true and toc_float: true are set up
 
 knitr::opts_chunk$set(echo = TRUE)
 
 library(reshape2)
+library(ggplot2)
 
 ```
 
@@ -60,7 +56,6 @@ data$sex<-as.factor(data$sex)
 data$shock<-as.factor(data$shock)
 data$shockCause<-as.factor(data$shockCause)
 data$pMoral<-as.factor(data$pMoral)
-
 
 ```
 
@@ -113,6 +108,26 @@ p1.1<-t.test(data$guilt~data$shockCause)
 #Output the result
 p1.1
 
+#Generate the graph
+plot1.1 <- ggplot(data = data,
+                  aes(x = shockCause,
+                      y = guilt,
+                      fill = shockCause)) +
+  labs(x = "Cause of Shock", 
+       y = "Guilt") +
+  stat_summary(fun = "mean",
+               geom = "bar",
+               position = "dodge") +
+  stat_summary(fun.data = "mean_cl_boot",
+               geom = "errorbar",
+               position = "dodge") +
+  scale_x_discrete(labels = c("Partner", "Self")) +
+  theme_gray(base_size = 20) +
+  guides(fill=F)
+
+#Output the graph
+plot1.1
+
 ```
 
 
@@ -127,6 +142,20 @@ p1.2<-t.test(data$guilt~data$pMoral)
 
 #Output the result
 p1.2
+
+#Generate the graph
+plot1.2 <- ggplot(data = data,
+                  aes(x = pMoral,
+                      y = guilt,
+                      fill = pMoral)) +
+  labs(x = "Partner Morality", y = "Guilt") +
+  geom_boxplot() +
+  scale_x_discrete(labels = c("Morally Bad", "Morally Good")) +
+  theme_gray(base_size = 20) +
+  guides(fill=F)
+
+#Output the graph
+plot1.2
 
 ```
 
@@ -146,6 +175,22 @@ anova(p1.3)
 #Output the group means
 tapply(data$guilt,data$shock,function(x) mean(x,na.rm=T))
 
+
+#Generate the graph
+plot1.3 <- ggplot(data = data,
+                  aes(x = shock,
+                      y = guilt,
+                      fill = shock)) +
+  labs(x = "Shock Voltage", y = "Guilt") +
+  geom_violin(position = position_dodge(.9)) +
+  geom_boxplot(position = position_dodge(.9),width=.1) +
+  scale_x_discrete(labels = c("Low", "Medium", "High")) +
+  theme_gray(base_size = 20) +
+  guides(fill=F)
+
+#Output the graph
+plot1.3
+
 ```
 
 
@@ -161,6 +206,21 @@ p2<-t.test(data$guilt~data$sex)
 #Output the result
 p2
 
+#Generate the graph
+plot2 <- ggplot(data = data,
+                  aes(x = sex,
+                      y = guilt,
+                      fill = sex)) +
+  labs(x = "Participant Sex", y = "Guilt") +
+  geom_violin(position = position_dodge(.9)) +
+  geom_boxplot(position = position_dodge(.9),width=.1) +
+  scale_x_discrete(labels = c("Female","Male")) +
+  theme_gray(base_size = 20) +
+  guides(fill=F)
+
+#Output the graph
+plot2
+
 ```
 
 
@@ -175,6 +235,19 @@ p3<-cor.test(data$agre,data$guilt)
 
 #Output the result
 p3
+
+#Generate the plot
+plot3<-ggplot(data=data,
+              aes(x=agre,
+                  y=guilt))+
+  labs(x="Participant Agreeableness",
+       y="Guilt")+
+  geom_point()+
+  geom_smooth(method="lm")+
+  theme_gray(base_size=20)
+
+#Output the plot
+plot3
 
 ```
 
@@ -194,6 +267,19 @@ p4
 #Test predictions 3 and 4 in a regression:
 guiltReg<-lm(guilt~neuro+agre,data=data)
 summary(guiltReg)
+
+#Generate the plot
+plot4<-ggplot(data=data,
+              aes(x=neuro,
+                  y=guilt))+
+  labs(x="Participant Neuroticism",
+       y="Guilt")+
+  geom_jitter()+
+  geom_smooth(method="lm")+
+  theme_gray(base_size=20)
+
+#Output the plot
+plot4
 
 ```
 
@@ -226,6 +312,21 @@ summary(p5.1)
 
 #Output means as a function of condition:
 tapply(dataMelt$share,dataMelt[,c(23,20)],function(x) mean(x,na.rm=T))
+
+#Generate the plot
+plot5.1<-ggplot(data = dataMelt,
+                aes(x = shockCause,
+                    y = share,
+                    fill = prePost)) +
+  geom_violin(position = position_dodge(.9)) +
+  geom_boxplot(position = position_dodge(.9), width = .1) +
+  labs(x = "Cause of Shock", y = "Money Shared ($)", fill = "Time") +
+  scale_x_discrete(labels = c("Partner", "Self")) +
+  scale_fill_discrete(labels = c("Before Shock", "After Shock")) +
+  theme_grey(base_size = 20)
+
+#Output the plot
+plot5.1
 ```
 
 
@@ -243,6 +344,21 @@ summary(p5.2)
 
 #Output means as a function of condition:
 tapply(dataMelt$share,dataMelt[,c(23,21)],function(x) mean(x,na.rm=T))
+
+#Generate the plot
+plot5.2<-ggplot(data = dataMelt,
+                aes(x = pMoral,
+                    y = share,
+                    fill = prePost)) +
+  geom_violin(position = position_dodge(.9)) +
+  geom_boxplot(position = position_dodge(.9), width = .1) +
+  labs(x = "Partner Morality", y = "Money Shared ($)", fill = "Time") +
+  scale_x_discrete(labels = c("Morally Bad", "Morally Good")) +
+  scale_fill_discrete(labels = c("Before Shock", "After Shock")) +
+  theme_grey(base_size = 20)
+
+#Output the plot
+plot5.2
 ```
 
 
@@ -260,6 +376,21 @@ summary(p5.3)
 
 #Output means as a function of condition:
 tapply(dataMelt$share,dataMelt[,c(23,19)],function(x) mean(x,na.rm=T))
+
+#Generate the plot
+plot5.3 <- ggplot(data = dataMelt,
+                  aes(x = shock,
+                      y = share,
+                      fill = prePost)) +
+  geom_violin(position = position_dodge(.9)) +
+  geom_boxplot(position = position_dodge(.9), width = .1) +
+  labs(x = "Shock Voltage", y = "Money Shared ($)", fill = "Time") +
+  scale_x_discrete(labels = c("Low", "Medium", "High")) +
+  scale_fill_discrete(labels = c("Before Shock", "After Shock")) +
+  theme_grey(base_size = 20)
+
+#Output the plot
+plot5.3
 ```
 
 
@@ -278,6 +409,21 @@ summary(p6)
 #Output means as a function of condition and sex:
 tapply(dataMelt$share,dataMelt[,c(23,2)],function(x) mean(x,na.rm=T))
 
+#Generate the plot
+plot6<-ggplot(data = dataMelt,
+                aes(x = sex,
+                    y = share,
+                    fill = prePost)) +
+  geom_violin(position = position_dodge(.9)) +
+  geom_boxplot(position = position_dodge(.9), width = .1) +
+  labs(x = "Participant Sex", y = "Money Shared ($)", fill = "Time") +
+  scale_x_discrete(labels = c("Female", "Male")) +
+  scale_fill_discrete(labels = c("Before Shock", "After Shock")) +
+  theme_grey(base_size = 20)
+
+#Output the plot
+plot6
+
 ```
 
 
@@ -293,6 +439,22 @@ p7<-cor.test(data$agre,data$postShare)
 #Output the result
 p7
 
+
+#Generate the plot
+plot7<-ggplot(data=dataMelt,
+              aes(x=agre,
+                  y=share,
+                  color=prePost))+
+  geom_jitter(alpha=.2)+
+  geom_smooth(method="lm",linewidth=2)+
+  labs(x="Participant Agreeableness",
+       y="Money Shared ($)",
+       color="Time")+
+  scale_color_discrete(labels=c("Pre-Shock","Post-Shock"))+
+  theme_gray(base_size=20)
+
+#Output the plot
+plot7
 ```
 
 
@@ -312,4 +474,19 @@ p8
 genReg<-lm(postShare~neuro+agre,data=data)
 summary(genReg)
 
+#Generate the plot
+plot8<-ggplot(data=dataMelt,
+              aes(x=neuro,
+                  y=share,
+                  color=prePost))+
+  geom_jitter(alpha=.2)+
+  geom_smooth(method="lm",linewidth=2)+
+  labs(x="Participant Neuroticism",
+       y="Money Shared ($)",
+       color="Time")+
+  scale_color_discrete(labels=c("Pre-Shock","Post-Shock"))+
+  theme_gray(base_size=20)
+
+#Output the plot
+plot8
 ```
