@@ -67,4 +67,4 @@ and Ashley will be available by email to help with questions or issues.
 | 4: Wednesday, July 19  | Basic Data Analysis                | [Week 4 Materials](https://github.com/dconroybeam/SummerStats2023/tree/main/Week%204) |
 | 5: Wednesday July 26   | Data Visualization                 | [Week 5 Materials](https://github.com/dconroybeam/SummerStats2023/tree/main/Week%205) |
 | 6: Wednesday, August 2 | Advanced Techniques                | [Week 6 Materials](https://github.com/dconroybeam/SummerStats2023/tree/main/Week%206) |
-| 7: Wednesday, August 9 | Final Presentations                |                                                                                       |
+| 7: Wednesday, August 9 | Final Presentations                | [Week 7 Materials](https://github.com/dconroybeam/SummerStats2023/tree/main/Week%207) |
